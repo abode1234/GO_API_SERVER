@@ -1,0 +1,48 @@
+
+package main
+{{ define "index" }}
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <title>Image Gallery</title>
+    <script src="https://unpkg.com/htmx.org@1.9.11"></script>
+</head>
+<body>
+<script src="https://unpkg.com/htmx.org@1.9.11"></script>
+    <h1>Image Upload</h1>
+    
+    <!-- Form for uploading an image -->
+    <form id="upload-form" hx-post="/images/upload" hx-enc-type="multipart/form-data" hx-target="#image-list" hx-swap="outerHTML">
+        <input type="text" name="title" placeholder="Title" required>
+        <textarea name="description" placeholder="Description"></textarea>
+        <input type="file" name="image" required>
+        <button type="submit">Upload</button>
+    </form>
+    
+    <div id="image-list">
+        {{ range .Images }}
+        <div class="image-item">
+            <h3>{{ .Title }}</h3>
+            <p>{{ .Description }}</p>
+            <img src="{{ .Path }}" alt="{{ .Title }}" height="100">
+            <!-- Form for deleting an image -->
+            <form hx-delete="/images/delete/{{ .ID }}" hx-target="#image-list" hx-swap="outerHTML">
+                <button type="submit">Delete</button>
+            </form>
+            <!-- Link to edit page -->
+            <a href="/images/edit/{{ .ID }}" hx-get="/images/edit/{{ .ID }}" hx-target="#edit-form" hx-swap="outerHTML">Edit</a>
+        </div>
+        {{ else }}
+        <p>No images available.</p>
+        {{ end }}
+    </div>
+    
+    <!-- Placeholder for the edit form -->
+    <div id="edit-form">
+        <!-- The edit form will be loaded here by HTMX -->
+    </div>
+    
+</body>
+</html>
+{{ end }}
